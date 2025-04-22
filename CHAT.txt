@@ -1,0 +1,89 @@
+Ý tưởng trang web: Mạng xã hội mini phi tập trung (Decentralized Mini Social Network)
+
+Mục tiêu:
+
+Tạo một nền tảng nơi người dùng có thể chia sẻ bài viết, bình luận, và tương tác bằng hình thức vote (like/dislike), tất cả đều được ghi nhận trên blockchain để đảm bảo tính minh bạch, chống giả mạo. Người dùng đăng nhập thông qua ví Metamask.
+
+Các chức năng chính:
+
+1. Đăng bài (Post Article):
+
+Người dùng sau khi đăng nhập bằng Metamask có thể tạo bài viết mới.
+
+Bài viết bao gồm: tiêu đề, nội dung, ảnh (tùy chọn).
+
+Dữ liệu bài viết (hoặc ít nhất là hash nội dung) sẽ được lưu lên smart contract.
+
+2. Vote (Like/Dislike):
+
+Mỗi bài viết và bình luận có thể được vote up/down.
+
+Một địa chỉ ví chỉ được vote 1 lần (được kiểm tra bởi smart contract).
+
+Kết quả vote lưu trên blockchain để đảm bảo không bị sửa đổi.
+
+3. Comment:
+
+Người dùng có thể bình luận vào bài viết.
+
+Mỗi bình luận là một transaction trên blockchain, gắn với địa chỉ người viết.
+
+4. Đăng nhập bằng Metamask:
+
+Tích hợp Metamask để xác thực danh tính người dùng.
+
+Không cần username/password, chỉ cần ví crypto.
+
+5. Cơ chế kiểm duyệt:
+
+Cách 1: Duyệt bài tập trung (Semi-centralized moderation)
+
+Admin có thể duyệt bài trước khi hiển thị (bài vẫn lưu trên blockchain nhưng được ẩn trên frontend nếu chưa được duyệt).
+
+Có thể có một smart contract ghi nhận "approved = true".
+
+Cách 2: Duyệt bài cộng đồng (Community moderation)
+
+Các bài viết có thể bị ẩn nếu có nhiều vote dislike hoặc bị báo cáo nhiều.
+
+Sử dụng số lượng lớn người dùng để quyết định việc hiển thị bài viết.
+
+Tạo token khuyến khích người dùng report đúng (ví dụ: nếu bài bị ẩn, người report đầu tiên được thưởng token).
+
+Cách 3: AI + Blockchain
+
+Sử dụng AI (ở client hoặc server) để lọc nội dung xấu trước khi cho phép ghi lên blockchain.
+
+Công nghệ đề xuất:
+
+Frontend: React + Web3.js / Ethers.js
+
+Smart contract: Solidity (trên Ethereum hoặc mạng rẻ hơn như Polygon, Arbitrum...)
+
+IPFS: Dùng để lưu nội dung hoặc ảnh (để giảm chi phí lưu trữ on-chain)
+
+Backend (nếu cần): Node.js + Express cho các tác vụ phụ trợ như duyệt bài, AI lọc nội dung
+
+UI/UX gợi ý:
+
+Trang chủ: Feed các bài viết mới
+
+Trang chi tiết bài viết: Nội dung, bình luận, vote
+
+Form đăng bài
+
+Tài khoản người dùng: Danh sách bài viết, bình luận của mình
+
+Admin dashboard (nếu cần duyệt bài)
+
+Tính năng mở rộng trong tương lai:
+
+Tích hợp NFT để trao phần thưởng cho người viết bài nổi bật
+
+Thêm hệ thống token cho tương tác (like/comment/post)
+
+Hệ thống ranking người dùng theo độ uy tín
+
+Thêm tag, hashtag cho bài viết
+
+Tích hợp DAO để vote các quyết định phát triển nền tảng

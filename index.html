@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Message Board DApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .message-form {
+        margin: 20px 0;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      .message-list {
+        margin-top: 20px;
+      }
+      .message-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      .message-sender {
+        font-weight: bold;
+        color: #666;
+      }
+      .message-time {
+        font-size: 0.8em;
+        color: #999;
+      }
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+      }
+      input[type="text"] {
+        width: 80%;
+        padding: 8px;
+        margin: 5px 0;
+      }
+      #status {
+        margin: 20px 0;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Message Board DApp</h1>
+
+    <div id="status">Trạng thái: Chưa kết nối</div>
+
+    <button onclick="connectWallet()">Kết nối Ví</button>
+
+    <div class="message-form">
+      <h3>Gửi tin nhắn mới</h3>
+      <input type="text" id="contractAddress" placeholder="Địa chỉ contract" />
+      <input
+        type="text"
+        id="messageContent"
+        placeholder="Nhập tin nhắn của bạn"
+      />
+      <button onclick="sendMessage()">Gửi tin nhắn</button>
+    </div>
+
+    <div class="message-list">
+      <h3>Danh sách tin nhắn</h3>
+      <button onclick="loadMessages()">Tải tin nhắn</button>
+      <div id="messageContainer"></div>
+    </div>
+
+    <script>
+      let provider;
+      let signer;
+      const statusDiv = document.getElementById("status");
+
+      const CONTRACT_ABI = [
+        "function sendMessage(string memory _content) public",
+        "function getAllMessages() public view returns (tuple(address sender, string content, uint256 timestamp)[])",
+        "function getMessageCount() public view returns (uint256)",
+        "event MessageSent(address indexed sender, string content, uint256 timestamp)",
+      ];
+
+      async function connectWallet() {
+        try {
+          if (typeof window.ethereum === "undefined") {
+            alert("Vui lòng cài đặt MetaMask!");
+            return;
+          }
+
+          await window.ethereum.request({method: "eth_requestAccounts"});
+          provider = new ethers.providers.Web3Provider(window.ethereum);
+          signer = await provider.getSigner();
+
+          const address = await signer.getAddress();
+          statusDiv.innerHTML = `Đã kết nối: ${address}`;
+        } catch (error) {
+          console.error(error);
+          statusDiv.innerHTML = `Lỗi: ${error.message}`;
+        }
+      }
+
+      async function sendMessage() {
+        try {
+          if (!provider || !signer) {
+            alert("Vui lòng kết nối ví trước!");
+            return;
+          }
+
+          const contractAddress =
+            document.getElementById("contractAddress").value;
+          const messageContent =
+            document.getElementById("messageContent").value;
+
+          if (!contractAddress || !messageContent) {
+            alert("Vui lòng nhập địa chỉ contract và nội dung tin nhắn!");
+            return;
+          }
+
+          const contract = new ethers.Contract(
+            contractAddress,
+            CONTRACT_ABI,
+            signer
+          );
+
+          contract.on("MessageSent", (sender, content, timestamp) => {
+            console.log(sender, content, timestamp);
+          });
+
+          statusDiv.innerHTML = "Đang gửi tin nhắn...";
+          const tx = await contract.sendMessage(messageContent);
+          await tx.wait();
+
+          statusDiv.innerHTML = "Tin nhắn đã được gửi thành công!";
+          document.getElementById("messageContent").value = "";
+
+          // Tải lại danh sách tin nhắn
+          await loadMessages();
+        } catch (error) {
+          console.error(error);
+          statusDiv.innerHTML = `Lỗi: ${error.message}`;
+        }
+      }
+
+      async function loadMessages() {
+        try {
+          if (!provider) {
+            alert("Vui lòng kết nối ví trước!");
+            return;
+          }
+
+          const contractAddress =
+            document.getElementById("contractAddress").value;
+          if (!contractAddress) {
+            alert("Vui lòng nhập địa chỉ contract!");
+            return;
+          }
+
+          const contract = new ethers.Contract(
+            contractAddress,
+            CONTRACT_ABI,
+            provider
+          );
+          const messages = await contract.getAllMessages();
+          console.log(messages);
+
+          const container = document.getElementById("messageContainer");
+          container.innerHTML = "";
+
+          messages.forEach((msg) => {
+            const time = new Date(
+              Number(msg.timestamp) * 1000
+            ).toLocaleString();
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "message-item";
+            messageDiv.innerHTML = `
+                        <div class="message-sender">${msg.sender}</div>
+                        <div class="message-content">${msg.content}</div>
+                        <div class="message-time">${time}</div>
+                    `;
+            container.appendChild(messageDiv);
+          });
+        } catch (error) {
+          console.error(error);
+          statusDiv.innerHTML = `Lỗi: ${error.message}`;
+        }
+      }
+    </script>
+  </body>
+</html>
