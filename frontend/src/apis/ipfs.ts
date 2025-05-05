@@ -1,4 +1,4 @@
-const IPFS_API_URL = "/api_ipfs/v0";
+const IPFS_API_URL = "/api/v0";
 const IPFS_GATEWAY_URL = "/ipfs";
 
 /**
