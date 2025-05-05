@@ -3,7 +3,7 @@ export type SiteConfig = typeof siteConfig;
 export const siteConfig = {
   name: "Social Network",
   description: "Mạng xã hội phi tập trung với token SN",
-  contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  contractAddress: "0x51d08642F0E53FEe982B0927c5c02944648311dE",
   contractABI: [
     "function smartUser() view returns (address)",
     "function balanceOf(address account) view returns (uint256)",

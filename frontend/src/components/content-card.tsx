@@ -1,22 +1,10 @@
 import { CardHeader } from "@heroui/react";
 import { Card } from "@heroui/react";
 
-export default function ContentCard({
-  contentHash,
-  author,
-  timestamp,
-  score,
-  parent,
-}: {
-  contentHash: string;
-  author: string;
-  timestamp: number;
-  score: number;
-  parent: number;
-}) {
+export default function ContentCard({ contentHash }: { contentHash: string }) {
   return (
     <Card>
-      <CardHeader>{author}</CardHeader>
+      <CardHeader>{contentHash}</CardHeader>
     </Card>
   );
 }

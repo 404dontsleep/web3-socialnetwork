@@ -1,10 +1,10 @@
 // scripts/deploy.js
 async function main() {
   // Reset mạng
-  await network.provider.request({
-    method: "hardhat_reset",
-    params: [],
-  });
+  // await network.provider.request({
+  //   method: "hardhat_reset",
+  //   params: [],
+  // });
 
   // Lấy người triển khai (deployer)
   const [deployer] = await ethers.getSigners();
