@@ -1,5 +1,5 @@
-const IPFS_API_URL = "http://localhost:5001/api/v0";
-const IPFS_GATEWAY_URL = "http://localhost:8080/ipfs";
+const IPFS_API_URL = "/api_ipfs/v0";
+const IPFS_GATEWAY_URL = "/ipfs";
 
 /**
  * Đăng tải dữ liệu lên IPFS

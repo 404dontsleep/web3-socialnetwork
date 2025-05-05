@@ -3,7 +3,7 @@ version: "3.8"
 services:
   ipfs:
     image: ipfs/go-ipfs:v0.10.0
-    container_name: ipfs_node
+    container_name: web3-ipfs
     ports:
       - "4001:4001"       # Libp2p swarm (peer-to-peer)
       - "5001:5001"       # API
@@ -14,14 +14,36 @@ services:
     restart: unless-stopped
     environment:
       - IPFS_CORS_ALLOWED_ORIGINS=["*"]   # Enable CORS for all origins
-      - IPFS_API_CORS_ALLOWED_ORIGINS=["http://localhost:1888"]  # Allow specific origin
+      - IPFS_API_CORS_ALLOWED_ORIGINS=["*"]  # Allow specific origin
+    networks:
+      - web3-network
   frontend:
+    container_name: web3-frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "1888:1888"
     restart: unless-stopped
-    container_name: frontend-app
     depends_on:
       - ipfs
+    networks:
+      - web3-network
+  # nginx:
+  #   container_name: web3-nginx
+  #   image: 'jc21/nginx-proxy-manager:latest'
+  #   restart: unless-stopped
+  #   ports:
+  #     - '80:80'
+  #     - '81:81'
+  #     - '443:443'
+  #   volumes:
+  #     - ./data:/data
+  #     - ./letsencrypt:/etc/letsencrypt
+  #   networks:
+  #     - web3-network
+
+networks:
+  web3-network:
+    driver: bridge
+

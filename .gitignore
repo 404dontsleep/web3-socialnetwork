@@ -22,3 +22,6 @@ ipfs_staging/
 
 CHAT.txt
 test.http
+
+data/
+letsencrypt/
