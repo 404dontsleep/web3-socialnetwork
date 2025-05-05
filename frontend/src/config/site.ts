@@ -1,69 +1,44 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "Vite + HeroUI",
-  description: "Make beautiful websites regardless of your design experience.",
-  navItems: [
-    {
-      label: "Home",
-      href: "/",
-    },
-    {
-      label: "Docs",
-      href: "/docs",
-    },
-    {
-      label: "Pricing",
-      href: "/pricing",
-    },
-    {
-      label: "Blog",
-      href: "/blog",
-    },
-    {
-      label: "About",
-      href: "/about",
-    },
+  name: "Social Network",
+  description: "Mạng xã hội phi tập trung với token SN",
+  contractAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  contractABI: [
+    "function smartUser() view returns (address)",
+    "function balanceOf(address account) view returns (uint256)",
+    "function smartContent() view returns (address)",
+    "function smartVote() view returns (address)",
+    "function smartAchievement() view returns (address)",
   ],
-  navMenuItems: [
-    {
-      label: "Profile",
-      href: "/profile",
-    },
-    {
-      label: "Dashboard",
-      href: "/dashboard",
-    },
-    {
-      label: "Projects",
-      href: "/projects",
-    },
-    {
-      label: "Team",
-      href: "/team",
-    },
-    {
-      label: "Calendar",
-      href: "/calendar",
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-    },
-    {
-      label: "Help & Feedback",
-      href: "/help-feedback",
-    },
-    {
-      label: "Logout",
-      href: "/logout",
-    },
+  smartUserABI: [
+    "function createUser(address _user, string memory _name, string memory _avatar, string memory _description)",
+    "function getUser(address _user) view returns (tuple(address user, string name, string avatar, string description))",
+    "function isUserRegistered(address _user) view returns (bool)",
   ],
-  links: {
-    github: "https://github.com/frontio-ai/heroui",
-    twitter: "https://twitter.com/hero_ui",
-    docs: "https://heroui.com",
-    discord: "https://discord.gg/9b6yyZKmH4",
-    sponsor: "https://patreon.com/jrgarciadev",
-  },
+  smartContentABI: [
+    "function createContent(string memory _contentHash)",
+    "function createContentByParent(string memory _contentHash, address _parent)",
+    "function getContent(address _user) view returns (tuple(address user, string contentHash, uint256 timestamp, address parent))",
+    "function getContentByParent(address _parent) view returns (address[])",
+    "function getContentByUser(address _user) view returns (address[])",
+    "function getAllContents() view returns (address[])",
+    "function contentCount() view returns (uint256)",
+    "function contents(address) view returns (tuple(address user, string contentHash, uint256 timestamp, address parent))",
+    "function contentsByParent(address) view returns (address[])",
+    "function contentsByUser(address) view returns (address[])",
+    "function contentsByIndex(uint256) view returns (address)",
+  ],
+  smartVoteABI: [
+    "function createVote(address _content, bool _isUpvote)",
+    "function getVotesCountByContent(address _content) view returns (uint256 upVote, uint256 downVote)",
+    "function isVoted(address, address) view returns (bool)",
+    "function getVotesByContent(address _content) view returns (tuple(address content, address user, bool isUpvote, uint256 timestamp)[])",
+    "function getVotesByUser(address _user) view returns (tuple(address content, address user, bool isUpvote, uint256 timestamp)[])",
+  ],
+  smartAchievementABI: [
+    "function createAchievement(address _user, string memory _name, string memory _description)",
+    "function getAchievement(address _achievementId) view returns (tuple(address user, string name, string description, uint256 timestamp))",
+    "function getAchievementsByUser(address _user) view returns (address[])",
+  ],
 };

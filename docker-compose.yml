@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  ipfs:
+    image: ipfs/go-ipfs:v0.10.0
+    container_name: ipfs_node
+    ports:
+      - "4001:4001"       # Libp2p swarm (peer-to-peer)
+      - "5001:5001"       # API
+      - "8080:8080"       # Gateway (HTTP content access)
+    volumes:
+      - ./ipfs_staging:/export            # optional for exporting files
+      - ./ipfs_data:/data/ipfs            # persistent IPFS storage
+    restart: unless-stopped
+    environment:
+      - IPFS_CORS_ALLOWED_ORIGINS=["*"]   # Enable CORS for all origins
+      - IPFS_API_CORS_ALLOWED_ORIGINS=["http://localhost:5173"]  # Allow specific origin

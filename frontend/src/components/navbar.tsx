@@ -1,144 +1,132 @@
-import { Button } from "@heroui/button";
-import { Kbd } from "@heroui/kbd";
-import { Link } from "@heroui/link";
-import { Input } from "@heroui/input";
+import { Fragment, Key, useEffect } from "react";
 import {
-  Navbar as HeroUINavbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenuToggle,
-  NavbarMenu,
-  NavbarMenuItem,
-} from "@heroui/navbar";
-import { link as linkStyles } from "@heroui/theme";
-import clsx from "clsx";
+  addToast,
+  Button,
+  Card,
+  CardHeader,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Image,
+  Skeleton,
+} from "@heroui/react";
+import { useTheme } from "@heroui/use-theme";
+import { ArrowLeftIcon, MoonIcon, SunDimIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import useSWR from "swr";
 
-import { siteConfig } from "@/config/site";
-import { ThemeSwitch } from "@/components/theme-switch";
-import {
-  TwitterIcon,
-  GithubIcon,
-  DiscordIcon,
-  HeartFilledIcon,
-  SearchIcon,
-} from "@/components/icons";
-import { Logo } from "@/components/icons";
+import walletStore from "@/stores/wallet.store";
+import themeStore from "@/stores/theme.store";
 
-export const Navbar = () => {
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
+export default function Navbar() {
+  const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+  const canGoBack = window.history.length > 1;
+  const { address, isSecondTime, connect, getUser, smartUserContract } =
+    walletStore();
+  const { setTheme: setThemeStore } = themeStore();
+  const { data: user } = useSWR(
+    `/api/user/${address}-${smartUserContract?.target}`,
+    () => (address ? getUser(address as string) : null),
   );
+
+  useEffect(() => {
+    setTheme(theme);
+    setThemeStore(theme);
+  }, [theme, setTheme, setThemeStore]);
+
+  useEffect(() => {
+    if (isSecondTime) {
+      connect().catch((err: any) => {
+        addToast({
+          title: "Lỗi",
+          description: "Không thể kết nối ví: " + err.message,
+          color: "danger",
+        });
+      });
+    }
+  }, [isSecondTime, connect]);
+
+  const handleConnect = () => {
+    connect().catch((err: any) => {
+      addToast({
+        title: "Lỗi",
+        description: "Không thể kết nối ví: " + err.message,
+        color: "danger",
+      });
+    });
+  };
+  const onAction = (key: Key) => {
+    if (key == "profile") {
+      navigate(`/profile/${address}`);
+    }
+  };
 
   return (
-    <HeroUINavbar maxWidth="xl" position="sticky">
-      <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand className="gap-3 max-w-fit">
-          <Link
-            className="flex justify-start items-center gap-1"
-            color="foreground"
-            href="/"
-          >
-            <Logo />
-            <p className="font-bold text-inherit">ACME</p>
-          </Link>
-        </NavbarBrand>
-        <div className="hidden lg:flex gap-4 justify-start ml-2">
-          {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
-              <Link
-                className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
-                )}
-                color="foreground"
-                href={item.href}
-              >
-                {item.label}
-              </Link>
-            </NavbarItem>
-          ))}
-        </div>
-      </NavbarContent>
+    <section className="m-2 container mx-auto fixed top-0 left-0 right-0 z-10">
+      <Card className="bg-transparent backdrop-blur-lg">
+        <CardHeader>
+          <div className="flex items-center w-full justify-start">
+            {canGoBack && (
+              <Button isIconOnly variant="flat" onPress={() => navigate(-1)}>
+                <ArrowLeftIcon />
+              </Button>
+            )}
+            <h1 className="ml-2 text-2xl font-bold">Navbar</h1>
+            <div className="flex-1" />
 
-      <NavbarContent
-        className="hidden sm:flex basis-1/5 sm:basis-full"
-        justify="end"
-      >
-        <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal href={siteConfig.links.twitter} title="Twitter">
-            <TwitterIcon className="text-default-500" />
-          </Link>
-          <Link isExternal href={siteConfig.links.discord} title="Discord">
-            <DiscordIcon className="text-default-500" />
-          </Link>
-          <Link isExternal href={siteConfig.links.github} title="GitHub">
-            <GithubIcon className="text-default-500" />
-          </Link>
-          <ThemeSwitch />
-        </NavbarItem>
-        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
-        <NavbarItem className="hidden md:flex">
-          <Button
-            isExternal
-            as={Link}
-            className="text-sm font-normal text-default-600 bg-default-100"
-            href={siteConfig.links.sponsor}
-            startContent={<HeartFilledIcon className="text-danger" />}
-            variant="flat"
-          >
-            Sponsor
-          </Button>
-        </NavbarItem>
-      </NavbarContent>
-
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-        <Link isExternal href={siteConfig.links.github}>
-          <GithubIcon className="text-default-500" />
-        </Link>
-        <ThemeSwitch />
-        <NavbarMenuToggle />
-      </NavbarContent>
-
-      <NavbarMenu>
-        {searchInput}
-        <div className="mx-4 mt-2 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item.label}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </div>
-      </NavbarMenu>
-    </HeroUINavbar>
+            {address ? (
+              <Fragment>
+                <Dropdown placement="bottom-end">
+                  <DropdownTrigger>
+                    <div className="ml-2 flex items-center gap-2">
+                      <div className="text-right">
+                        <p className="text-sm font-bold">{user?.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {address.slice(0, 6)}...{address.slice(-4)}
+                        </p>
+                      </div>
+                      {user?.avatar ? (
+                        <Image
+                          alt="avatar"
+                          className="w-10 h-10 rounded-full"
+                          src={user.avatar}
+                        />
+                      ) : (
+                        <Skeleton className="w-10 h-10 rounded-full" />
+                      )}
+                    </div>
+                  </DropdownTrigger>
+                  <DropdownMenu onAction={onAction}>
+                    <DropdownItem key="profile">Hồ sơ</DropdownItem>
+                    <DropdownItem
+                      key="theme"
+                      endContent={
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="flat"
+                          onPress={() => {
+                            setTheme(theme === "dark" ? "light" : "dark");
+                            setThemeStore(theme === "dark" ? "light" : "dark");
+                          }}
+                        >
+                          {theme === "dark" ? <SunDimIcon /> : <MoonIcon />}
+                        </Button>
+                      }
+                    >
+                      Theme
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </Fragment>
+            ) : (
+              <Button onPress={handleConnect}>Kết nối</Button>
+            )}
+          </div>
+        </CardHeader>
+      </Card>
+    </section>
   );
-};
+}

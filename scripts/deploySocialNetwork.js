@@ -7,13 +7,15 @@ async function main() {
   // Lấy contract factory
   const SocialNetwork = await ethers.getContractFactory("SocialNetwork");
 
-  // Deploy contract
-  const socialNetwork = await SocialNetwork.deploy();
-  await socialNetwork.waitForDeployment();
+  // Deploy contract tại địa chỉ cụ thể
+  const socialNetwork = await SocialNetwork.attach(
+    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  );
+  console.log(
+    "SocialNetwork đã được triển khai lại tại:",
+    await socialNetwork.getAddress()
+  );
 
-  // Lấy địa chỉ contract đã deploy
-  const address = await socialNetwork.getAddress();
-  console.log("SocialNetwork đã được triển khai tại:", address);
   console.log(
     "Số dư của người triển khai:",
     (await deployer.getBalance()).toString()
@@ -23,6 +25,6 @@ async function main() {
 main()
   .then(() => process.exit(0))
   .catch((error) => {
-    console.error(error);
+    console.error(error); 
     process.exit(1);
   });
