@@ -193,7 +193,6 @@ function UserActivity({ address }: { address: string }) {
     getVotesByUser,
     getAchievement,
     getAchievementsByUser,
-    smartAchievementContract,
     smartContentContract,
     smartVoteContract,
   } = walletStore();
