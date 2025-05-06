@@ -1,5 +1,5 @@
-const IPFS_API_URL = "/api/v0";
-const IPFS_GATEWAY_URL = "/ipfs";
+const IPFS_API_URL = "https://demonhom4.testtoolv2.shop/api/v0";
+const IPFS_GATEWAY_URL = "https://demonhom4.testtoolv2.shop/ipfs";
 
 /**
  * Đăng tải dữ liệu lên IPFS

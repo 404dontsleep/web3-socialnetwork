@@ -12,7 +12,7 @@ import {
   Medal,
 } from "lucide-react";
 
-import walletStore, { Achievement } from "@/stores/wallet.store";
+import walletStore, { Achievement, Content } from "@/stores/wallet.store";
 import UserCard from "@/components/user-card";
 
 export default function ProfilePage() {
@@ -201,7 +201,7 @@ function UserActivity({ address }: { address: string }) {
     (
       | {
           type: "content";
-          content: string;
+          content: Content;
           timestamp: number;
         }
       | {
@@ -230,7 +230,7 @@ function UserActivity({ address }: { address: string }) {
 
           return {
             address: content,
-            timestamp: Number(contentData.timestamp),
+            ...contentData,
           };
         }),
       );
@@ -248,7 +248,7 @@ function UserActivity({ address }: { address: string }) {
       const _activitys: typeof activitys = [
         ...allContents.map((content) => ({
           type: "content" as const,
-          content: content.address,
+          content: content,
           timestamp: content.timestamp,
         })),
         ...votes.map((vote) => ({

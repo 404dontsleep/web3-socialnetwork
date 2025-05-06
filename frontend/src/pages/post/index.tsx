@@ -96,6 +96,7 @@ function PostCard({ contentAddress }: { contentAddress: string }) {
 
   if (!content) return <div>Không tìm thấy bài viết</div>;
   if (content.parent !== ethers.ZeroAddress) return null;
+  // if ((votesCount?.upVote || 0) < (votesCount?.downVote || 0)) return null;
 
   return (
     <Card
