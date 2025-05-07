@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Card, CardBody, Divider, Skeleton, Tooltip } from "@heroui/react";
 import useSWR from "swr";
 import { useEffect, useState } from "react";
@@ -275,7 +275,14 @@ function UserActivity({ address }: { address: string }) {
         return {
           icon: <MessageSquare size={20} />,
           bgClass: "bg-primary-500/20 text-primary-500",
-          message: "Posted new content",
+          message: (
+            <>
+              Posted new content{" "}
+              <Link to={`/post/${(activity.content as any).address}`}>
+                {(activity.content as any).address.slice(0, 8)}...
+              </Link>
+            </>
+          ),
         };
       case "vote":
         return activity.isUpvote
